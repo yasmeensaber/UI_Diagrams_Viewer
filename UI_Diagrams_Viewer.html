@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Components - Diagrams Viewer</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        .diagram-container {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .diagram-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            color: #495057;
+            text-decoration: none;
+            padding: 5px 10px;
+            display: block;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .toc a:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Kingdom of Steps - UI Components Diagrams</h1>
+        
+        <div class="note">
+            <strong>Note:</strong> This interactive viewer displays class and sequence diagrams for the UI architecture. 
+            Scroll down to view all diagrams or use the table of contents to jump to specific sections.
+        </div>
+
+        <div class="toc">
+            <h3>📑 Table of Contents</h3>
+            <ul>
+                <li><a href="#class-diagram">Class Diagram</a></li>
+                <li><a href="#login-flow">Login Flow Sequence</a></li>
+                <li><a href="#matchmaking-flow">Matchmaking Flow Sequence</a></li>
+                <li><a href="#match-progress">Match Progress Sequence</a></li>
+                <li><a href="#profile-flow">Profile Screen Flow Sequence</a></li>
+                <li><a href="#logout-flow">Logout Flow Sequence</a></li>
+            </ul>
+        </div>
+
+        <h2 id="class-diagram">📊 Class Diagram</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">UI Components Class Structure</div>
+            <div class="mermaid">
+classDiagram
+    UIPanel <|-- LoginUI
+    UIPanel <|-- HomeScreenUI
+    UIPanel <|-- MatchmakingUI
+    UIPanel <|-- MatchUI
+    UIPanel <|-- MatchResultUI
+    UIPanel <|-- ProfileScreenUI
+
+    UIPanelController *-- LoginUI
+    UIPanelController *-- HomeScreenUI
+    UIPanelController *-- MatchmakingUI
+    UIPanelController *-- MatchUI
+    UIPanelController *-- MatchResultUI
+    UIPanelController *-- ProfileScreenUI
+
+    LoginUI ..> LoginPanelLogic
+    HomeScreenUI ..> HomeScreenLogic
+    MatchmakingUI ..> MatchMakingLogic
+    MatchUI ..> MatchLogic
+    ProfileScreenUI ..> ProfileScreenLogic
+
+    LoginPanelLogic --> UIPanelController
+    HomeScreenLogic --> UIPanelController
+    MatchMakingLogic --> UIPanelController
+    MatchLogic --> UIPanelController
+
+    HomeScreenLogic ..> IPlayFabManager
+    MatchLogic ..> IPlayFabManager
+    MatchLogic ..> IMatchManager
+    ProfileScreenLogic ..> IPlayFabManager
+            </div>
+        </div>
+
+        <h2 id="login-flow">🔐 Login Flow Sequence</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">User Login Process</div>
+            <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant LoginUI
+    participant LoginPanelLogic
+    participant AuthManager
+    participant UIPanelController
+    participant HomeScreenUI
+    participant HomeScreenLogic
+    participant PlayFabManager
+
+    User->>LoginUI: Click Login Button
+    LoginUI->>LoginPanelLogic: OnLoginClicked event
+    LoginPanelLogic->>AuthManager: LoginAsGuest()
+    AuthManager->>LoginUI: SetLoading(true)
+    AuthManager->>LoginUI: SetStatus("Signing in...")
+    AuthManager->>PlayFabManager: Authenticate
+    PlayFabManager-->>AuthManager: Authentication Result
+    AuthManager->>LoginPanelLogic: OnLoggedIn event
+    LoginPanelLogic->>UIPanelController: ShowHomeScreen()
+    UIPanelController->>HomeScreenUI: Show()
+    LoginPanelLogic->>UIPanelController: HideLogin()
+    UIPanelController->>LoginUI: Hide()
+    LoginPanelLogic->>HomeScreenLogic: RefreshPlayerData()
+    HomeScreenLogic->>PlayFabManager: GetPlayerDataAsync()
+    PlayFabManager-->>HomeScreenLogic: PlayerModel
+    HomeScreenLogic->>HomeScreenUI: UpdatePlayerInfo(PlayerModel)
+    HomeScreenUI->>HomeScreenUI: Update UI elements
+            </div>
+        </div>
+
+        <h2 id="matchmaking-flow">🎯 Matchmaking Flow Sequence</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">Matchmaking and Match Start Process</div>
+            <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant HomeScreenUI
+    participant HomeScreenLogic
+    participant UIPanelController
+    participant MatchMakingLogic
+    participant MatchmakingUI
+    participant MatchmakingManager
+    participant MatchLogic
+    participant MatchUI
+    participant MatchManager
+
+    User->>HomeScreenUI: Click Play Button
+    HomeScreenUI->>HomeScreenLogic: RequestPlay()
+    HomeScreenLogic->>UIPanelController: ShowMatchmaking()
+    UIPanelController->>MatchmakingUI: Show()
+    UIPanelController->>HomeScreenUI: Hide()
+    HomeScreenLogic->>MatchMakingLogic: StartMatchmaking()
+    MatchMakingLogic->>MatchmakingManager: StartMatchmaking()
+    MatchmakingManager->>MatchmakingUI: SetStatus("Searching...")
+    MatchmakingUI->>MatchmakingUI: Start timer display
+    MatchmakingManager->>MatchMakingLogic: OnMatchFound(matchId, opponentId)
+    MatchMakingLogic->>UIPanelController: ShowMatch()
+    UIPanelController->>MatchUI: Show()
+    UIPanelController->>MatchmakingUI: Hide()
+    MatchMakingLogic->>MatchManager: Create match
+    MatchManager->>MatchLogic: OnMatchStarted(MatchHistoryModel)
+    MatchLogic->>MatchUI: ResetDisplay()
+    MatchManager->>MatchLogic: OnCountdownTick(seconds)
+    MatchLogic->>MatchUI: ShowCountdown(seconds)
+    MatchManager->>MatchLogic: OnCountdownComplete()
+    MatchLogic->>MatchUI: HideCountdown()
+    MatchManager->>MatchLogic: OnTimerUpdated(remainingTime)
+    MatchLogic->>MatchUI: UpdateTimerDisplay(time, color, fill)
+            </div>
+        </div>
+
+        <h2 id="match-progress">⚔️ Match Progress Sequence</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">Match Progress and Updates</div>
+            <div class="mermaid">
+sequenceDiagram
+    participant MatchUI
+    participant MatchLogic
+    participant MatchManager
+    participant Server
+    participant UIPanelController
+    participant MatchResultUI
+
+    MatchUI->>MatchLogic: OnAddStepsRequested(steps)
+    MatchLogic->>MatchManager: AddSteps(steps)
+    MatchManager->>Server: Send steps update
+    Server->>Server: Validate and update
+    Server-->>MatchManager: Updated match state
+    MatchManager->>MatchLogic: OnMatchStateUpdated(ServerMatchState)
+    MatchLogic->>MatchUI: UpdatePlayerSteps(steps)
+    MatchLogic->>MatchUI: UpdateOpponentSteps(steps)
+    
+    MatchManager->>MatchLogic: OnTimerUpdated(remainingTime)
+    alt Low Time Remaining
+        MatchLogic->>MatchUI: UpdateTimerDisplay(time, RED, fill)
+    else Medium Time Remaining
+        MatchLogic->>MatchUI: UpdateTimerDisplay(time, YELLOW, fill)
+    else Normal Time
+        MatchLogic->>MatchUI: UpdateTimerDisplay(time, WHITE, fill)
+    end
+    
+    MatchManager->>MatchLogic: OnMatchEnded(MatchHistoryModel)
+    MatchLogic->>UIPanelController: ShowMatchResult()
+    UIPanelController->>MatchUI: Hide()
+    UIPanelController->>MatchResultUI: Show()
+    MatchLogic->>MatchResultUI: DisplayResult()
+    MatchResultUI->>MatchResultUI: ShowResult()
+    MatchLogic->>MatchResultUI: DisplayReward()
+            </div>
+        </div>
+
+        <h2 id="profile-flow">👤 Profile Screen Flow Sequence</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">Profile Screen Navigation and Data Loading</div>
+            <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant HomeScreenUI
+    participant HomeScreenLogic
+    participant UIPanelController
+    participant ProfileScreenUI
+    participant ProfileScreenLogic
+    participant PlayFabManager
+
+    User->>HomeScreenUI: Click Profile Button
+    HomeScreenUI->>HomeScreenLogic: RequestProfile()
+    HomeScreenLogic->>UIPanelController: ShowProfileScreen()
+    UIPanelController->>ProfileScreenUI: Show()
+    UIPanelController->>HomeScreenUI: Hide()
+    ProfileScreenUI->>ProfileScreenLogic: GetPlayerDataAsync()
+    ProfileScreenLogic->>PlayFabManager: GetPlayerDataAsync()
+    PlayFabManager-->>ProfileScreenLogic: PlayerModel
+    ProfileScreenLogic->>ProfileScreenUI: HandlePlayerDataLoaded(PlayerModel)
+    ProfileScreenUI->>ProfileScreenUI: UpdateUIWithPlayerData(PlayerModel)
+    alt ImageUrl exists
+        ProfileScreenUI->>ProfileScreenUI: LoadProfileImage(url)
+    end
+    
+    User->>ProfileScreenUI: Click Close Button
+    ProfileScreenUI->>UIPanelController: HideProfileScreen()
+    UIPanelController->>ProfileScreenUI: Hide()
+    UIPanelController->>HomeScreenUI: Show()
+            </div>
+        </div>
+
+        <h2 id="logout-flow">🚪 Logout Flow Sequence</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">User Logout Process</div>
+            <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant HomeScreenUI
+    participant HomeScreenLogic
+    participant AuthManager
+    participant UIPanelController
+    participant LoginUI
+    participant LoginPanelLogic
+
+    User->>HomeScreenUI: Click Logout Button
+    HomeScreenUI->>HomeScreenLogic: RequestLogout()
+    HomeScreenLogic->>AuthManager: LogoutFull()
+    AuthManager->>AuthManager: Clear session
+    AuthManager->>LoginPanelLogic: OnLoggedOut event
+    LoginPanelLogic->>UIPanelController: ShowLogin()
+    UIPanelController->>LoginUI: Show()
+    UIPanelController->>HomeScreenUI: Hide()
+    LoginPanelLogic->>LoginPanelLogic: UpdatePanels(false)
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                diagramMarginX: 50,
+                diagramMarginY: 10,
+                actorMargin: 50,
+                width: 150,
+                height: 65,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35,
+                mirrorActors: true,
+                bottomMarginAdj: 1,
+                useMaxWidth: true,
+                rightAngles: false,
+                showSequenceNumbers: false
+            },
+            class: {
+                useMaxWidth: true
+            }
+        });
+    </script>
+</body>
+</html>
