@@ -87,6 +87,13 @@
             margin: 20px 0;
             border-radius: 4px;
         }
+        .new-component {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +105,10 @@
             Scroll down to view all diagrams or use the table of contents to jump to specific sections.
         </div>
 
+        <div class="new-component">
+            <strong>Updated:</strong> Added new UI components including SettingsUI/SettingsLogic and MatchResultLogic with their respective flow diagrams.
+        </div>
+
         <div class="toc">
             <h3>📑 Table of Contents</h3>
             <ul>
@@ -105,7 +116,9 @@
                 <li><a href="#login-flow">Login Flow Sequence</a></li>
                 <li><a href="#matchmaking-flow">Matchmaking Flow Sequence</a></li>
                 <li><a href="#match-progress">Match Progress Sequence</a></li>
+                <li><a href="#match-result-flow">Match Result Flow Sequence</a></li>
                 <li><a href="#profile-flow">Profile Screen Flow Sequence</a></li>
+                <li><a href="#settings-flow">Settings Screen Flow Sequence</a></li>
                 <li><a href="#logout-flow">Logout Flow Sequence</a></li>
             </ul>
         </div>
@@ -121,6 +134,7 @@ classDiagram
     UIPanel <|-- MatchUI
     UIPanel <|-- MatchResultUI
     UIPanel <|-- ProfileScreenUI
+    UIPanel <|-- SettingsUI
 
     UIPanelController *-- LoginUI
     UIPanelController *-- HomeScreenUI
@@ -128,22 +142,32 @@ classDiagram
     UIPanelController *-- MatchUI
     UIPanelController *-- MatchResultUI
     UIPanelController *-- ProfileScreenUI
+    UIPanelController *-- SettingsUI
 
     LoginUI ..> LoginPanelLogic
     HomeScreenUI ..> HomeScreenLogic
     MatchmakingUI ..> MatchMakingLogic
     MatchUI ..> MatchLogic
+    MatchResultUI ..> MatchResultLogic
     ProfileScreenUI ..> ProfileScreenLogic
+    SettingsUI ..> SettingsLogic
 
     LoginPanelLogic --> UIPanelController
     HomeScreenLogic --> UIPanelController
     MatchMakingLogic --> UIPanelController
     MatchLogic --> UIPanelController
+    MatchResultLogic --> UIPanelController
+    SettingsLogic --> UIPanelController
 
     HomeScreenLogic ..> IPlayFabManager
     MatchLogic ..> IPlayFabManager
     MatchLogic ..> IMatchManager
     ProfileScreenLogic ..> IPlayFabManager
+    MatchResultLogic ..> IPlayFabManager
+    MatchResultLogic ..> IMatchManager
+
+    SettingsLogic ..> AudioSource
+    SettingsLogic ..> LocalizationSettings
             </div>
         </div>
 
@@ -256,9 +280,52 @@ sequenceDiagram
     MatchLogic->>UIPanelController: ShowMatchResult()
     UIPanelController->>MatchUI: Hide()
     UIPanelController->>MatchResultUI: Show()
-    MatchLogic->>MatchResultUI: DisplayResult()
+    MatchLogic->>MatchResultLogic: OnMatchEnded(MatchHistoryModel)
+    MatchResultLogic->>MatchResultUI: DisplayResult()
     MatchResultUI->>MatchResultUI: ShowResult()
-    MatchLogic->>MatchResultUI: DisplayReward()
+    MatchResultLogic->>MatchResultUI: DisplayReward()
+            </div>
+        </div>
+
+        <h2 id="match-result-flow">🏆 Match Result Flow Sequence</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">Match Result Screen Navigation and Actions</div>
+            <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant MatchResultUI
+    participant MatchResultLogic
+    participant UIPanelController
+    participant MatchManager
+    participant PlayFabManager
+    participant MatchmakingUI
+
+    Note over MatchResultUI,MatchResultLogic: Match ended, result screen shown
+    MatchResultLogic->>MatchResultUI: DisplayResult(match, playerId, playerName, opponentName)
+    MatchResultUI->>MatchResultUI: Update result display
+    MatchResultUI->>MatchResultUI: Show winner/loser status
+    MatchResultUI->>MatchResultUI: Display rewards/stats
+
+    User->>MatchResultUI: Click Rematch Button
+    MatchResultUI->>MatchResultLogic: OnRematchRequested event
+    MatchResultLogic->>MatchManager: ResetMatchState()
+    MatchResultLogic->>UIPanelController: ShowMatchmaking()
+    UIPanelController->>MatchResultUI: Hide()
+    UIPanelController->>MatchmakingUI: Show()
+    MatchResultLogic->>MatchManager: StartMatchmakingAsync()
+    MatchManager-->>MatchResultLogic: Matchmaking started
+    
+    User->>MatchResultUI: Click Main Menu Button
+    MatchResultUI->>MatchResultLogic: OnMainMenuRequested event
+    MatchResultLogic->>MatchManager: ResetMatchState()
+    MatchResultLogic->>UIPanelController: ShowHomeScreen()
+    UIPanelController->>MatchResultUI: Hide()
+    UIPanelController->>HomeScreenUI: Show()
+    
+    Note over MatchResultLogic,PlayFabManager: Get player info for display
+    MatchResultLogic->>PlayFabManager: CurrentPlayer
+    PlayFabManager-->>MatchResultLogic: Player data
+    MatchResultLogic->>MatchResultUI: Update with player info
             </div>
         </div>
 
@@ -292,6 +359,58 @@ sequenceDiagram
     User->>ProfileScreenUI: Click Close Button
     ProfileScreenUI->>UIPanelController: HideProfileScreen()
     UIPanelController->>ProfileScreenUI: Hide()
+    UIPanelController->>HomeScreenUI: Show()
+            </div>
+        </div>
+
+        <h2 id="settings-flow">⚙️ Settings Screen Flow Sequence</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">Settings Screen Configuration and Audio Management</div>
+            <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant HomeScreenUI
+    participant HomeScreenLogic
+    participant UIPanelController
+    participant SettingsUI
+    participant SettingsLogic
+    participant AudioSource
+    participant LocalizationSettings
+
+    User->>HomeScreenUI: Click Settings Button
+    HomeScreenUI->>HomeScreenLogic: RequestSettings()
+    HomeScreenLogic->>UIPanelController: ShowSettings()
+    UIPanelController->>SettingsUI: Show()
+    UIPanelController->>HomeScreenUI: Hide()
+    SettingsLogic->>SettingsLogic: LoadSettings()
+    SettingsLogic->>SettingsUI: SetSfxToggle(isSfxEnabled)
+    SettingsLogic->>SettingsUI: SetMusicToggle(isMusicEnabled)
+    SettingsLogic->>SettingsUI: UpdateLanguageButton(isEnglish)
+
+    User->>SettingsUI: Toggle SFX Button
+    SettingsUI->>SettingsLogic: ToggleSfx(isOn)
+    SettingsLogic->>AudioSource: Set mute state for SFX sources
+    SettingsLogic->>SettingsLogic: Save SFX preference to PlayerPrefs
+
+    User->>SettingsUI: Toggle Music Button
+    SettingsUI->>SettingsLogic: ToggleMusic(isOn)
+    SettingsLogic->>AudioSource: Set mute state for music source
+    alt Music enabled and not playing
+        SettingsLogic->>AudioSource: Play()
+    end
+    SettingsLogic->>SettingsLogic: Save music preference to PlayerPrefs
+
+    User->>SettingsUI: Click Language Toggle
+    SettingsUI->>SettingsLogic: ToggleLanguage()
+    SettingsLogic->>SettingsLogic: SwitchLanguageCoroutine(language)
+    SettingsLogic->>LocalizationSettings: Set selected locale
+    LocalizationSettings-->>SettingsLogic: Language changed
+    SettingsLogic->>SettingsUI: UpdateLanguageButton(isEnglish)
+
+    User->>SettingsUI: Click Back Button
+    SettingsUI->>SettingsLogic: OnBack()
+    SettingsLogic->>UIPanelController: HideSettings()
+    UIPanelController->>SettingsUI: Hide()
     UIPanelController->>HomeScreenUI: Show()
             </div>
         </div>
