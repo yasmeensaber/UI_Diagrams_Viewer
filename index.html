@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,25 +14,29 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             padding: 30px;
         }
+
         h1 {
             color: #333;
             text-align: center;
             margin-bottom: 10px;
         }
+
         h2 {
             color: #667eea;
             border-bottom: 3px solid #667eea;
             padding-bottom: 10px;
             margin-top: 40px;
         }
+
         .diagram-container {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
@@ -40,34 +45,41 @@
             margin: 20px 0;
             overflow-x: auto;
         }
+
         .diagram-title {
             font-weight: bold;
             color: #495057;
             margin-bottom: 15px;
             font-size: 1.1em;
         }
+
         .mermaid {
             background: white;
             padding: 20px;
             border-radius: 5px;
         }
+
         .toc {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 30px;
         }
+
         .toc h3 {
             margin-top: 0;
             color: #667eea;
         }
+
         .toc ul {
             list-style: none;
             padding-left: 0;
         }
+
         .toc li {
             margin: 8px 0;
         }
+
         .toc a {
             color: #495057;
             text-decoration: none;
@@ -76,10 +88,12 @@
             border-radius: 4px;
             transition: background 0.2s;
         }
+
         .toc a:hover {
             background: #e9ecef;
             color: #667eea;
         }
+
         .note {
             background: #fff3cd;
             border-left: 4px solid #ffc107;
@@ -87,6 +101,7 @@
             margin: 20px 0;
             border-radius: 4px;
         }
+
         .new-component {
             background: #d1ecf1;
             border-left: 4px solid #17a2b8;
@@ -96,17 +111,19 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🎮 Kingdom of Steps - UI Components Diagrams</h1>
-        
+
         <div class="note">
-            <strong>Note:</strong> This interactive viewer displays class and sequence diagrams for the UI architecture. 
+            <strong>Note:</strong> This interactive viewer displays class and sequence diagrams for the UI architecture.
             Scroll down to view all diagrams or use the table of contents to jump to specific sections.
         </div>
 
         <div class="new-component">
-            <strong>Updated:</strong> Added new UI components including SettingsUI/SettingsLogic and MatchResultLogic with their respective flow diagrams.
+            <strong>Updated:</strong> Core UI components including SettingsUI/SettingsLogic and MatchResultLogic with
+            their respective flow diagrams.
         </div>
 
         <div class="toc">
@@ -159,13 +176,6 @@ classDiagram
     MatchResultLogic --> UIPanelController
     SettingsLogic --> UIPanelController
 
-    HomeScreenLogic ..> IPlayFabManager
-    MatchLogic ..> IPlayFabManager
-    MatchLogic ..> IMatchManager
-    ProfileScreenLogic ..> IPlayFabManager
-    MatchResultLogic ..> IPlayFabManager
-    MatchResultLogic ..> IMatchManager
-
     SettingsLogic ..> AudioSource
     SettingsLogic ..> LocalizationSettings
             </div>
@@ -183,24 +193,19 @@ sequenceDiagram
     participant UIPanelController
     participant HomeScreenUI
     participant HomeScreenLogic
-    participant PlayFabManager
 
     User->>LoginUI: Click Login Button
     LoginUI->>LoginPanelLogic: OnLoginClicked event
     LoginPanelLogic->>AuthManager: LoginAsGuest()
     AuthManager->>LoginUI: SetLoading(true)
     AuthManager->>LoginUI: SetStatus("Signing in...")
-    AuthManager->>PlayFabManager: Authenticate
-    PlayFabManager-->>AuthManager: Authentication Result
     AuthManager->>LoginPanelLogic: OnLoggedIn event
     LoginPanelLogic->>UIPanelController: ShowHomeScreen()
     UIPanelController->>HomeScreenUI: Show()
     LoginPanelLogic->>UIPanelController: HideLogin()
     UIPanelController->>LoginUI: Hide()
     LoginPanelLogic->>HomeScreenLogic: RefreshPlayerData()
-    HomeScreenLogic->>PlayFabManager: GetPlayerDataAsync()
-    PlayFabManager-->>HomeScreenLogic: PlayerModel
-    HomeScreenLogic->>HomeScreenUI: UpdatePlayerInfo(PlayerModel)
+    HomeScreenLogic->>HomeScreenUI: UpdatePlayerInfo()
     HomeScreenUI->>HomeScreenUI: Update UI elements
             </div>
         </div>
@@ -219,7 +224,6 @@ sequenceDiagram
     participant MatchmakingManager
     participant MatchLogic
     participant MatchUI
-    participant MatchManager
 
     User->>HomeScreenUI: Click Play Button
     HomeScreenUI->>HomeScreenLogic: RequestPlay()
@@ -234,14 +238,13 @@ sequenceDiagram
     MatchMakingLogic->>UIPanelController: ShowMatch()
     UIPanelController->>MatchUI: Show()
     UIPanelController->>MatchmakingUI: Hide()
-    MatchMakingLogic->>MatchManager: Create match
-    MatchManager->>MatchLogic: OnMatchStarted(MatchHistoryModel)
+    MatchMakingLogic->>MatchLogic: OnMatchStarted()
     MatchLogic->>MatchUI: ResetDisplay()
-    MatchManager->>MatchLogic: OnCountdownTick(seconds)
+    MatchLogic->>MatchLogic: OnCountdownTick(seconds)
     MatchLogic->>MatchUI: ShowCountdown(seconds)
-    MatchManager->>MatchLogic: OnCountdownComplete()
+    MatchLogic->>MatchLogic: OnCountdownComplete()
     MatchLogic->>MatchUI: HideCountdown()
-    MatchManager->>MatchLogic: OnTimerUpdated(remainingTime)
+    MatchLogic->>MatchLogic: OnTimerUpdated(remainingTime)
     MatchLogic->>MatchUI: UpdateTimerDisplay(time, color, fill)
             </div>
         </div>
@@ -253,21 +256,19 @@ sequenceDiagram
 sequenceDiagram
     participant MatchUI
     participant MatchLogic
-    participant MatchManager
     participant Server
     participant UIPanelController
     participant MatchResultUI
+    participant MatchResultLogic
 
     MatchUI->>MatchLogic: OnAddStepsRequested(steps)
-    MatchLogic->>MatchManager: AddSteps(steps)
-    MatchManager->>Server: Send steps update
+    MatchLogic->>Server: Send steps update
     Server->>Server: Validate and update
-    Server-->>MatchManager: Updated match state
-    MatchManager->>MatchLogic: OnMatchStateUpdated(ServerMatchState)
+    Server-->>MatchLogic: Updated match state
     MatchLogic->>MatchUI: UpdatePlayerSteps(steps)
     MatchLogic->>MatchUI: UpdateOpponentSteps(steps)
-    
-    MatchManager->>MatchLogic: OnTimerUpdated(remainingTime)
+
+    MatchLogic->>MatchLogic: OnTimerUpdated(remainingTime)
     alt Low Time Remaining
         MatchLogic->>MatchUI: UpdateTimerDisplay(time, RED, fill)
     else Medium Time Remaining
@@ -275,12 +276,12 @@ sequenceDiagram
     else Normal Time
         MatchLogic->>MatchUI: UpdateTimerDisplay(time, WHITE, fill)
     end
-    
-    MatchManager->>MatchLogic: OnMatchEnded(MatchHistoryModel)
+
+    MatchLogic->>MatchLogic: OnMatchEnded()
     MatchLogic->>UIPanelController: ShowMatchResult()
     UIPanelController->>MatchUI: Hide()
     UIPanelController->>MatchResultUI: Show()
-    MatchLogic->>MatchResultLogic: OnMatchEnded(MatchHistoryModel)
+    MatchLogic->>MatchResultLogic: OnMatchEnded()
     MatchResultLogic->>MatchResultUI: DisplayResult()
     MatchResultUI->>MatchResultUI: ShowResult()
     MatchResultLogic->>MatchResultUI: DisplayReward()
@@ -296,35 +297,31 @@ sequenceDiagram
     participant MatchResultUI
     participant MatchResultLogic
     participant UIPanelController
-    participant MatchManager
-    participant PlayFabManager
     participant MatchmakingUI
+    participant HomeScreenUI
 
     Note over MatchResultUI,MatchResultLogic: Match ended, result screen shown
-    MatchResultLogic->>MatchResultUI: DisplayResult(match, playerId, playerName, opponentName)
+    MatchResultLogic->>MatchResultUI: DisplayResult()
     MatchResultUI->>MatchResultUI: Update result display
     MatchResultUI->>MatchResultUI: Show winner/loser status
     MatchResultUI->>MatchResultUI: Display rewards/stats
 
     User->>MatchResultUI: Click Rematch Button
     MatchResultUI->>MatchResultLogic: OnRematchRequested event
-    MatchResultLogic->>MatchManager: ResetMatchState()
+    MatchResultLogic->>MatchResultLogic: ResetMatchState()
     MatchResultLogic->>UIPanelController: ShowMatchmaking()
     UIPanelController->>MatchResultUI: Hide()
     UIPanelController->>MatchmakingUI: Show()
-    MatchResultLogic->>MatchManager: StartMatchmakingAsync()
-    MatchManager-->>MatchResultLogic: Matchmaking started
-    
+    MatchResultLogic->>MatchResultLogic: StartMatchmakingAsync()
+
     User->>MatchResultUI: Click Main Menu Button
     MatchResultUI->>MatchResultLogic: OnMainMenuRequested event
-    MatchResultLogic->>MatchManager: ResetMatchState()
+    MatchResultLogic->>MatchResultLogic: ResetMatchState()
     MatchResultLogic->>UIPanelController: ShowHomeScreen()
     UIPanelController->>MatchResultUI: Hide()
     UIPanelController->>HomeScreenUI: Show()
-    
-    Note over MatchResultLogic,PlayFabManager: Get player info for display
-    MatchResultLogic->>PlayFabManager: CurrentPlayer
-    PlayFabManager-->>MatchResultLogic: Player data
+
+    Note over MatchResultLogic: Get player info for display
     MatchResultLogic->>MatchResultUI: Update with player info
             </div>
         </div>
@@ -340,7 +337,6 @@ sequenceDiagram
     participant UIPanelController
     participant ProfileScreenUI
     participant ProfileScreenLogic
-    participant PlayFabManager
 
     User->>HomeScreenUI: Click Profile Button
     HomeScreenUI->>HomeScreenLogic: RequestProfile()
@@ -348,14 +344,13 @@ sequenceDiagram
     UIPanelController->>ProfileScreenUI: Show()
     UIPanelController->>HomeScreenUI: Hide()
     ProfileScreenUI->>ProfileScreenLogic: GetPlayerDataAsync()
-    ProfileScreenLogic->>PlayFabManager: GetPlayerDataAsync()
-    PlayFabManager-->>ProfileScreenLogic: PlayerModel
-    ProfileScreenLogic->>ProfileScreenUI: HandlePlayerDataLoaded(PlayerModel)
-    ProfileScreenUI->>ProfileScreenUI: UpdateUIWithPlayerData(PlayerModel)
+    ProfileScreenLogic->>ProfileScreenLogic: LoadPlayerData()
+    ProfileScreenLogic->>ProfileScreenUI: HandlePlayerDataLoaded()
+    ProfileScreenUI->>ProfileScreenUI: UpdateUIWithPlayerData()
     alt ImageUrl exists
         ProfileScreenUI->>ProfileScreenUI: LoadProfileImage(url)
     end
-    
+
     User->>ProfileScreenUI: Click Close Button
     ProfileScreenUI->>UIPanelController: HideProfileScreen()
     UIPanelController->>ProfileScreenUI: Hide()
@@ -442,7 +437,7 @@ sequenceDiagram
     </div>
 
     <script>
-        mermaid.initialize({ 
+        mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
             securityLevel: 'loose',
@@ -473,4 +468,5 @@ sequenceDiagram
         });
     </script>
 </body>
+
 </html>
