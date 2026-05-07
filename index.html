@@ -118,12 +118,10 @@
 
         <div class="note">
             <strong>Note:</strong> This interactive viewer displays class and sequence diagrams for the UI architecture.
-            Scroll down to view all diagrams or use the table of contents to jump to specific sections.
         </div>
 
         <div class="new-component">
-            <strong>Updated:</strong> Core UI components including SettingsUI/SettingsLogic and MatchResultLogic with
-            their respective flow diagrams.
+            <strong>Updated:</strong> Core UI components including SettingsUI and MatchResultLogic.
         </div>
 
         <div class="toc">
@@ -133,10 +131,6 @@
                 <li><a href="#login-flow">Login Flow Sequence</a></li>
                 <li><a href="#matchmaking-flow">Matchmaking Flow Sequence</a></li>
                 <li><a href="#match-progress">Match Progress Sequence</a></li>
-                <li><a href="#match-result-flow">Match Result Flow Sequence</a></li>
-                <li><a href="#profile-flow">Profile Screen Flow Sequence</a></li>
-                <li><a href="#settings-flow">Settings Screen Flow Sequence</a></li>
-                <li><a href="#logout-flow">Logout Flow Sequence</a></li>
             </ul>
         </div>
 
@@ -144,40 +138,49 @@
         <div class="diagram-container">
             <div class="diagram-title">UI Components Class Structure</div>
             <div class="mermaid">
-classDiagram
-    UIPanel <|-- LoginUI
-    UIPanel <|-- HomeScreenUI
-    UIPanel <|-- MatchmakingUI
-    UIPanel <|-- MatchUI
-    UIPanel <|-- MatchResultUI
-    UIPanel <|-- ProfileScreenUI
-    UIPanel <|-- SettingsUI
+                classDiagram
+                    UIPanel <|-- LoginUI
+                    UIPanel <|-- HomeScreenUI
+                    UIPanel <|-- MatchmakingUI
+                    UIPanel <|-- MatchUI
+                    UIPanel <|-- MatchResultUI
+                    UIPanel <|-- ProfileScreenUI
+                    UIPanel <|-- SettingsUI
+                    UIPanel <|-- ClanDiscoveryUI
+                    UIPanel <|-- ClanHomeUI
 
-    UIPanelController *-- LoginUI
-    UIPanelController *-- HomeScreenUI
-    UIPanelController *-- MatchmakingUI
-    UIPanelController *-- MatchUI
-    UIPanelController *-- MatchResultUI
-    UIPanelController *-- ProfileScreenUI
-    UIPanelController *-- SettingsUI
+                    UIPanelController *-- LoginUI
+                    UIPanelController *-- HomeScreenUI
+                    UIPanelController *-- MatchmakingUI
+                    UIPanelController *-- MatchUI
+                    UIPanelController *-- MatchResultUI
+                    UIPanelController *-- ProfileScreenUI
+                    UIPanelController *-- SettingsUI
+                    UIPanelController *-- ClanDiscoveryUI
+                    UIPanelController *-- ClanHomeUI
 
-    LoginUI ..> LoginPanelLogic
-    HomeScreenUI ..> HomeScreenLogic
-    MatchmakingUI ..> MatchMakingLogic
-    MatchUI ..> MatchLogic
-    MatchResultUI ..> MatchResultLogic
-    ProfileScreenUI ..> ProfileScreenLogic
-    SettingsUI ..> SettingsLogic
+                    LoginUI ..> LoginPanelLogic
+                    HomeScreenUI ..> HomeScreenLogic
+                    MatchmakingUI ..> MatchMakingLogic
+                    MatchUI ..> MatchLogic
+                    MatchResultUI ..> MatchResultLogic
+                    ProfileScreenUI ..> ProfileScreenLogic
+                    SettingsUI ..> SettingsLogic
+                    ClanDiscoveryUI ..> ClanDiscoveryLogic
+                    ClanHomeUI ..> ClanHomeLogic
 
-    LoginPanelLogic --> UIPanelController
-    HomeScreenLogic --> UIPanelController
-    MatchMakingLogic --> UIPanelController
-    MatchLogic --> UIPanelController
-    MatchResultLogic --> UIPanelController
-    SettingsLogic --> UIPanelController
+                    LoginPanelLogic --> UIPanelController
+                    HomeScreenLogic --> UIPanelController
+                    MatchMakingLogic --> UIPanelController
+                    MatchLogic --> UIPanelController
+                    MatchResultLogic --> UIPanelController
+                    SettingsLogic --> UIPanelController
+                    ClanDiscoveryLogic --> UIPanelController
+                    ClanHomeLogic --> UIPanelController
 
-    SettingsLogic ..> AudioSource
-    SettingsLogic ..> LocalizationSettings
+                    SettingsLogic ..> AudioSource
+                    SettingsLogic ..> LocalizationSettings
+                    ClanHomeLogic ..> ClanManager
             </div>
         </div>
 
@@ -185,28 +188,28 @@ classDiagram
         <div class="diagram-container">
             <div class="diagram-title">User Login Process</div>
             <div class="mermaid">
-sequenceDiagram
-    actor User
-    participant LoginUI
-    participant LoginPanelLogic
-    participant AuthManager
-    participant UIPanelController
-    participant HomeScreenUI
-    participant HomeScreenLogic
+                sequenceDiagram
+                    actor User
+                    participant LoginUI
+                    participant LoginPanelLogic
+                    participant AuthManager
+                    participant UIPanelController
+                    participant HomeScreenUI
+                    participant HomeScreenLogic
 
-    User->>LoginUI: Click Login Button
-    LoginUI->>LoginPanelLogic: OnLoginClicked event
-    LoginPanelLogic->>AuthManager: LoginAsGuest()
-    AuthManager->>LoginUI: SetLoading(true)
-    AuthManager->>LoginUI: SetStatus("Signing in...")
-    AuthManager->>LoginPanelLogic: OnLoggedIn event
-    LoginPanelLogic->>UIPanelController: ShowHomeScreen()
-    UIPanelController->>HomeScreenUI: Show()
-    LoginPanelLogic->>UIPanelController: HideLogin()
-    UIPanelController->>LoginUI: Hide()
-    LoginPanelLogic->>HomeScreenLogic: RefreshPlayerData()
-    HomeScreenLogic->>HomeScreenUI: UpdatePlayerInfo()
-    HomeScreenUI->>HomeScreenUI: Update UI elements
+                    User->>LoginUI: Click Login Button
+                    LoginUI->>LoginPanelLogic: OnLoginClicked event
+                    LoginPanelLogic->>AuthManager: LoginAsGuest()
+                    AuthManager->>LoginUI: SetLoading(true)
+                    AuthManager->>LoginUI: SetStatus('Signing in...')
+                    AuthManager->>LoginPanelLogic: OnLoggedIn event
+                    LoginPanelLogic->>UIPanelController: ShowHomeScreen()
+                    UIPanelController->>HomeScreenUI: Show()
+                    LoginPanelLogic->>UIPanelController: HideLogin()
+                    UIPanelController->>LoginUI: Hide()
+                    LoginPanelLogic->>HomeScreenLogic: RefreshPlayerData()
+                    HomeScreenLogic->>HomeScreenUI: UpdatePlayerInfo()
+                    HomeScreenUI->>HomeScreenUI: Update UI elements
             </div>
         </div>
 
@@ -214,38 +217,38 @@ sequenceDiagram
         <div class="diagram-container">
             <div class="diagram-title">Matchmaking and Match Start Process</div>
             <div class="mermaid">
-sequenceDiagram
-    actor User
-    participant HomeScreenUI
-    participant HomeScreenLogic
-    participant UIPanelController
-    participant MatchMakingLogic
-    participant MatchmakingUI
-    participant MatchmakingManager
-    participant MatchLogic
-    participant MatchUI
+                sequenceDiagram
+                    actor User
+                    participant HomeScreenUI
+                    participant HomeScreenLogic
+                    participant UIPanelController
+                    participant MatchMakingLogic
+                    participant MatchmakingUI
+                    participant MatchmakingManager
+                    participant MatchLogic
+                    participant MatchUI
 
-    User->>HomeScreenUI: Click Play Button
-    HomeScreenUI->>HomeScreenLogic: RequestPlay()
-    HomeScreenLogic->>UIPanelController: ShowMatchmaking()
-    UIPanelController->>MatchmakingUI: Show()
-    UIPanelController->>HomeScreenUI: Hide()
-    HomeScreenLogic->>MatchMakingLogic: StartMatchmaking()
-    MatchMakingLogic->>MatchmakingManager: StartMatchmaking()
-    MatchmakingManager->>MatchmakingUI: SetStatus("Searching...")
-    MatchmakingUI->>MatchmakingUI: Start timer display
-    MatchmakingManager->>MatchMakingLogic: OnMatchFound(matchId, opponentId)
-    MatchMakingLogic->>UIPanelController: ShowMatch()
-    UIPanelController->>MatchUI: Show()
-    UIPanelController->>MatchmakingUI: Hide()
-    MatchMakingLogic->>MatchLogic: OnMatchStarted()
-    MatchLogic->>MatchUI: ResetDisplay()
-    MatchLogic->>MatchLogic: OnCountdownTick(seconds)
-    MatchLogic->>MatchUI: ShowCountdown(seconds)
-    MatchLogic->>MatchLogic: OnCountdownComplete()
-    MatchLogic->>MatchUI: HideCountdown()
-    MatchLogic->>MatchLogic: OnTimerUpdated(remainingTime)
-    MatchLogic->>MatchUI: UpdateTimerDisplay(time, color, fill)
+                    User->>HomeScreenUI: Click Play Button
+                    HomeScreenUI->>HomeScreenLogic: RequestPlay()
+                    HomeScreenLogic->>UIPanelController: ShowMatchmaking()
+                    UIPanelController->>MatchmakingUI: Show()
+                    UIPanelController->>HomeScreenUI: Hide()
+                    HomeScreenLogic->>MatchMakingLogic: StartMatchmaking()
+                    MatchMakingLogic->>MatchmakingManager: StartMatchmaking()
+                    MatchmakingManager->>MatchmakingUI: SetStatus('Searching...')
+                    MatchmakingUI->>MatchmakingUI: Start timer display
+                    MatchmakingManager->>MatchMakingLogic: OnMatchFound('matchId', 'opponentId')
+                    MatchMakingLogic->>UIPanelController: ShowMatch()
+                    UIPanelController->>MatchUI: Show()
+                    UIPanelController->>MatchmakingUI: Hide()
+                    MatchMakingLogic->>MatchLogic: OnMatchStarted()
+                    MatchLogic->>MatchUI: ResetDisplay()
+                    MatchLogic->>MatchLogic: OnCountdownTick('seconds')
+                    MatchLogic->>MatchUI: ShowCountdown('seconds')
+                    MatchLogic->>MatchLogic: OnCountdownComplete()
+                    MatchLogic->>MatchUI: HideCountdown()
+                    MatchLogic->>MatchLogic: OnTimerUpdated('remainingTime')
+                    MatchLogic->>MatchUI: UpdateTimerDisplay('time', 'color', 'fill')
             </div>
         </div>
 
@@ -253,185 +256,38 @@ sequenceDiagram
         <div class="diagram-container">
             <div class="diagram-title">Match Progress and Updates</div>
             <div class="mermaid">
-sequenceDiagram
-    participant MatchUI
-    participant MatchLogic
-    participant Server
-    participant UIPanelController
-    participant MatchResultUI
-    participant MatchResultLogic
+                sequenceDiagram
+                    participant MatchUI
+                    participant MatchLogic
+                    participant Server
+                    participant UIPanelController
+                    participant MatchResultUI
+                    participant MatchResultLogic
 
-    MatchUI->>MatchLogic: OnAddStepsRequested(steps)
-    MatchLogic->>Server: Send steps update
-    Server->>Server: Validate and update
-    Server-->>MatchLogic: Updated match state
-    MatchLogic->>MatchUI: UpdatePlayerSteps(steps)
-    MatchLogic->>MatchUI: UpdateOpponentSteps(steps)
+                    MatchUI->>MatchLogic: OnAddStepsRequested('steps')
+                    MatchLogic->>Server: Send steps update
+                    Server->>Server: Validate and update
+                    Server-->>MatchLogic: Updated match state
+                    MatchLogic->>MatchUI: UpdatePlayerSteps('steps')
+                    MatchLogic->>MatchUI: UpdateOpponentSteps('steps')
 
-    MatchLogic->>MatchLogic: OnTimerUpdated(remainingTime)
-    alt Low Time Remaining
-        MatchLogic->>MatchUI: UpdateTimerDisplay(time, RED, fill)
-    else Medium Time Remaining
-        MatchLogic->>MatchUI: UpdateTimerDisplay(time, YELLOW, fill)
-    else Normal Time
-        MatchLogic->>MatchUI: UpdateTimerDisplay(time, WHITE, fill)
-    end
+                    MatchLogic->>MatchLogic: OnTimerUpdated('remainingTime')
+                    alt Low Time Remaining
+                        MatchLogic->>MatchUI: UpdateTimerDisplay('time', 'RED', 'fill')
+                    else Medium Time Remaining
+                        MatchLogic->>MatchUI: UpdateTimerDisplay('time', 'YELLOW', 'fill')
+                    else Normal Time
+                        MatchLogic->>MatchUI: UpdateTimerDisplay('time', 'WHITE', 'fill')
+                    end
 
-    MatchLogic->>MatchLogic: OnMatchEnded()
-    MatchLogic->>UIPanelController: ShowMatchResult()
-    UIPanelController->>MatchUI: Hide()
-    UIPanelController->>MatchResultUI: Show()
-    MatchLogic->>MatchResultLogic: OnMatchEnded()
-    MatchResultLogic->>MatchResultUI: DisplayResult()
-    MatchResultUI->>MatchResultUI: ShowResult()
-    MatchResultLogic->>MatchResultUI: DisplayReward()
-            </div>
-        </div>
-
-        <h2 id="match-result-flow">🏆 Match Result Flow Sequence</h2>
-        <div class="diagram-container">
-            <div class="diagram-title">Match Result Screen Navigation and Actions</div>
-            <div class="mermaid">
-sequenceDiagram
-    actor User
-    participant MatchResultUI
-    participant MatchResultLogic
-    participant UIPanelController
-    participant MatchmakingUI
-    participant HomeScreenUI
-
-    Note over MatchResultUI,MatchResultLogic: Match ended, result screen shown
-    MatchResultLogic->>MatchResultUI: DisplayResult()
-    MatchResultUI->>MatchResultUI: Update result display
-    MatchResultUI->>MatchResultUI: Show winner/loser status
-    MatchResultUI->>MatchResultUI: Display rewards/stats
-
-    User->>MatchResultUI: Click Rematch Button
-    MatchResultUI->>MatchResultLogic: OnRematchRequested event
-    MatchResultLogic->>MatchResultLogic: ResetMatchState()
-    MatchResultLogic->>UIPanelController: ShowMatchmaking()
-    UIPanelController->>MatchResultUI: Hide()
-    UIPanelController->>MatchmakingUI: Show()
-    MatchResultLogic->>MatchResultLogic: StartMatchmakingAsync()
-
-    User->>MatchResultUI: Click Main Menu Button
-    MatchResultUI->>MatchResultLogic: OnMainMenuRequested event
-    MatchResultLogic->>MatchResultLogic: ResetMatchState()
-    MatchResultLogic->>UIPanelController: ShowHomeScreen()
-    UIPanelController->>MatchResultUI: Hide()
-    UIPanelController->>HomeScreenUI: Show()
-
-    Note over MatchResultLogic: Get player info for display
-    MatchResultLogic->>MatchResultUI: Update with player info
-            </div>
-        </div>
-
-        <h2 id="profile-flow">👤 Profile Screen Flow Sequence</h2>
-        <div class="diagram-container">
-            <div class="diagram-title">Profile Screen Navigation and Data Loading</div>
-            <div class="mermaid">
-sequenceDiagram
-    actor User
-    participant HomeScreenUI
-    participant HomeScreenLogic
-    participant UIPanelController
-    participant ProfileScreenUI
-    participant ProfileScreenLogic
-
-    User->>HomeScreenUI: Click Profile Button
-    HomeScreenUI->>HomeScreenLogic: RequestProfile()
-    HomeScreenLogic->>UIPanelController: ShowProfileScreen()
-    UIPanelController->>ProfileScreenUI: Show()
-    UIPanelController->>HomeScreenUI: Hide()
-    ProfileScreenUI->>ProfileScreenLogic: GetPlayerDataAsync()
-    ProfileScreenLogic->>ProfileScreenLogic: LoadPlayerData()
-    ProfileScreenLogic->>ProfileScreenUI: HandlePlayerDataLoaded()
-    ProfileScreenUI->>ProfileScreenUI: UpdateUIWithPlayerData()
-    alt ImageUrl exists
-        ProfileScreenUI->>ProfileScreenUI: LoadProfileImage(url)
-    end
-
-    User->>ProfileScreenUI: Click Close Button
-    ProfileScreenUI->>UIPanelController: HideProfileScreen()
-    UIPanelController->>ProfileScreenUI: Hide()
-    UIPanelController->>HomeScreenUI: Show()
-            </div>
-        </div>
-
-        <h2 id="settings-flow">⚙️ Settings Screen Flow Sequence</h2>
-        <div class="diagram-container">
-            <div class="diagram-title">Settings Screen Configuration and Audio Management</div>
-            <div class="mermaid">
-sequenceDiagram
-    actor User
-    participant HomeScreenUI
-    participant HomeScreenLogic
-    participant UIPanelController
-    participant SettingsUI
-    participant SettingsLogic
-    participant AudioSource
-    participant LocalizationSettings
-
-    User->>HomeScreenUI: Click Settings Button
-    HomeScreenUI->>HomeScreenLogic: RequestSettings()
-    HomeScreenLogic->>UIPanelController: ShowSettings()
-    UIPanelController->>SettingsUI: Show()
-    UIPanelController->>HomeScreenUI: Hide()
-    SettingsLogic->>SettingsLogic: LoadSettings()
-    SettingsLogic->>SettingsUI: SetSfxToggle(isSfxEnabled)
-    SettingsLogic->>SettingsUI: SetMusicToggle(isMusicEnabled)
-    SettingsLogic->>SettingsUI: UpdateLanguageButton(isEnglish)
-
-    User->>SettingsUI: Toggle SFX Button
-    SettingsUI->>SettingsLogic: ToggleSfx(isOn)
-    SettingsLogic->>AudioSource: Set mute state for SFX sources
-    SettingsLogic->>SettingsLogic: Save SFX preference to PlayerPrefs
-
-    User->>SettingsUI: Toggle Music Button
-    SettingsUI->>SettingsLogic: ToggleMusic(isOn)
-    SettingsLogic->>AudioSource: Set mute state for music source
-    alt Music enabled and not playing
-        SettingsLogic->>AudioSource: Play()
-    end
-    SettingsLogic->>SettingsLogic: Save music preference to PlayerPrefs
-
-    User->>SettingsUI: Click Language Toggle
-    SettingsUI->>SettingsLogic: ToggleLanguage()
-    SettingsLogic->>SettingsLogic: SwitchLanguageCoroutine(language)
-    SettingsLogic->>LocalizationSettings: Set selected locale
-    LocalizationSettings-->>SettingsLogic: Language changed
-    SettingsLogic->>SettingsUI: UpdateLanguageButton(isEnglish)
-
-    User->>SettingsUI: Click Back Button
-    SettingsUI->>SettingsLogic: OnBack()
-    SettingsLogic->>UIPanelController: HideSettings()
-    UIPanelController->>SettingsUI: Hide()
-    UIPanelController->>HomeScreenUI: Show()
-            </div>
-        </div>
-
-        <h2 id="logout-flow">🚪 Logout Flow Sequence</h2>
-        <div class="diagram-container">
-            <div class="diagram-title">User Logout Process</div>
-            <div class="mermaid">
-sequenceDiagram
-    actor User
-    participant HomeScreenUI
-    participant HomeScreenLogic
-    participant AuthManager
-    participant UIPanelController
-    participant LoginUI
-    participant LoginPanelLogic
-
-    User->>HomeScreenUI: Click Logout Button
-    HomeScreenUI->>HomeScreenLogic: RequestLogout()
-    HomeScreenLogic->>AuthManager: LogoutFull()
-    AuthManager->>AuthManager: Clear session
-    AuthManager->>LoginPanelLogic: OnLoggedOut event
-    LoginPanelLogic->>UIPanelController: ShowLogin()
-    UIPanelController->>LoginUI: Show()
-    UIPanelController->>HomeScreenUI: Hide()
-    LoginPanelLogic->>LoginPanelLogic: UpdatePanels(false)
+                    MatchLogic->>MatchLogic: OnMatchEnded()
+                    MatchLogic->>UIPanelController: ShowMatchResult()
+                    UIPanelController->>MatchUI: Hide()
+                    UIPanelController->>MatchResultUI: Show()
+                    MatchLogic->>MatchResultLogic: OnMatchEnded()
+                    MatchResultLogic->>MatchResultUI: DisplayResult()
+                    MatchResultUI->>MatchResultUI: ShowResult()
+                    MatchResultLogic->>MatchResultUI: DisplayReward()
             </div>
         </div>
     </div>
@@ -440,31 +296,7 @@ sequenceDiagram
         mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
-            securityLevel: 'loose',
-            flowchart: {
-                useMaxWidth: true,
-                htmlLabels: true,
-                curve: 'basis'
-            },
-            sequence: {
-                diagramMarginX: 50,
-                diagramMarginY: 10,
-                actorMargin: 50,
-                width: 150,
-                height: 65,
-                boxMargin: 10,
-                boxTextMargin: 5,
-                noteMargin: 10,
-                messageMargin: 35,
-                mirrorActors: true,
-                bottomMarginAdj: 1,
-                useMaxWidth: true,
-                rightAngles: false,
-                showSequenceNumbers: false
-            },
-            class: {
-                useMaxWidth: true
-            }
+            securityLevel: 'loose'
         });
     </script>
 </body>
